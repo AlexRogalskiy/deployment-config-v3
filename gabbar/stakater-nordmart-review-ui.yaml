@@ -1,10 +1,10 @@
 ---
-# Source: review/charts/stakater-nordmart-review-ui/charts/application/templates/serviceaccount.yaml
+# Source: review-web/charts/stakater-nordmart-review-ui/charts/application/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app: review
+    app: review-web
     appVersion: "0.0.4"
     group: com.stakater.platform
     provider: stakater
@@ -13,14 +13,14 @@ metadata:
     release: "RELEASE-NAME"
     heritage: "Helm"
   namespace: default
-  name: review
+  name: review-web
 ---
-# Source: review/charts/stakater-nordmart-review-ui/charts/application/templates/service.yaml
+# Source: review-web/charts/stakater-nordmart-review-ui/charts/application/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: review
+    app: review-web
     appVersion: "0.0.4"
     group: com.stakater.platform
     provider: stakater
@@ -28,11 +28,11 @@ metadata:
     chart: "application-0.0.63"
     release: "RELEASE-NAME"
     heritage: "Helm"
-  name: review
+  name: review-web
   namespace: default
 spec:
   selector:
-    app: review
+    app: review-web
     maistra.io/expose-route: "true"
   ports:
     - name: http
@@ -40,12 +40,12 @@ spec:
       protocol: TCP
       targetPort: 4200
 ---
-# Source: review/charts/stakater-nordmart-review-ui/charts/application/templates/deployment.yaml
+# Source: review-web/charts/stakater-nordmart-review-ui/charts/application/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: review
+    app: review-web
     appVersion: "0.0.4"
     group: com.stakater.platform
     provider: stakater
@@ -56,19 +56,19 @@ metadata:
     appCategory: frontend
   annotations: 
     reloader.stakater.com/auto: "true"
-  name: review
+  name: review-web
   namespace: default
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: review
+      app: review-web
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: review
+        app: review-web
         maistra.io/expose-route: "true"
       annotations:
         sidecar.istio.io/inject: "true"
@@ -77,7 +77,7 @@ spec:
       imagePullSecrets:
       - name: nexus-docker-config-forked
       containers:
-      - name: review
+      - name: review-web
         image: "nexus-docker-openshift-stakater-nexus.apps.binero-test.8sdzwd1l.kubeapp.cloud/stakater-nordmart-review-ui:0.0.4"
         imagePullPolicy: IfNotPresent
         env:
@@ -110,14 +110,14 @@ spec:
           requests:
             memory: 128Mi
             cpu: 0.1
-      serviceAccountName: review
+      serviceAccountName: review-web
 ---
-# Source: review/charts/stakater-nordmart-review-ui/charts/application/templates/forecastle.yaml
+# Source: review-web/charts/stakater-nordmart-review-ui/charts/application/templates/forecastle.yaml
 apiVersion: forecastle.stakater.com/v1alpha1
 kind: ForecastleApp
 metadata:
   labels:
-    app: review
+    app: review-web
     appVersion: "0.0.4"
     group: com.stakater.platform
     provider: stakater
@@ -125,7 +125,7 @@ metadata:
     chart: "application-0.0.63"
     release: "RELEASE-NAME"
     heritage: "Helm"
-  name: review
+  name: review-web
   namespace: default
 spec:
   name: Review Web
@@ -133,17 +133,17 @@ spec:
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/stakater-big.png
   urlFrom:
     routeRef:
-      name: review
+      name: review-web
   networkRestricted: false
 ---
-# Source: review/charts/stakater-nordmart-review-ui/charts/application/templates/route.yaml
+# Source: review-web/charts/stakater-nordmart-review-ui/charts/application/templates/route.yaml
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: review
+  name: review-web
   namespace: default
   labels:
-    app: review
+    app: review-web
     appVersion: "0.0.4"
     group: com.stakater.platform
     provider: stakater
@@ -158,7 +158,7 @@ spec:
 
   to:
     kind: Service
-    name: review
+    name: review-web
     weight: 100
   wildcardPolicy: None
   tls:
